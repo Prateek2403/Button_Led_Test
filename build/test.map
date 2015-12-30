@@ -9,6 +9,12 @@ ti/driverlib/gcc/libdriver.a(sysctl.o)
 ti/driverlib/gcc/libdriver.a(cpu.o)
                               ti/driverlib/gcc/libdriver.a(interrupt.o) (CPUcpsid)
 
+Allocating common symbols
+Common symbol       size              file
+
+ret_button          0x4               test.o
+ui32Loop            0x4               test.o
+
 Discarded input sections
 
  .text          0x0000000000000000        0x0 test.o
@@ -274,8 +280,6 @@ Discarded input sections
                 0x0000000000000000        0xc ti/driverlib/gcc/libdriver.a(sysctl.o)
  .text.SysCtlResetCauseClear
                 0x0000000000000000       0x10 ti/driverlib/gcc/libdriver.a(sysctl.o)
- .text.SysCtlDelay
-                0x0000000000000000        0x8 ti/driverlib/gcc/libdriver.a(sysctl.o)
  .text.SysCtlMOSCConfigSet
                 0x0000000000000000        0xc ti/driverlib/gcc/libdriver.a(sysctl.o)
  .text.SysCtlPIOSCCalibrate
@@ -356,70 +360,76 @@ SRAM             0x0000000020000000 0x0000000000008000 xrw
 Linker script and memory map
 
 
-.text           0x0000000000000000      0x660
+.text           0x0000000000000000      0x6e0
                 0x0000000000000000                _text = .
  *(.isr_vector)
  .isr_vector    0x0000000000000000      0x26c ti/startup.o
                 0x0000000000000000                g_pfnVectors
  *(.text*)
+ .text.delay_debounce
+                0x000000000000026c       0x60 test.o
+                0x000000000000026c                delay_debounce
  .text.startup.main
-                0x000000000000026c       0xe8 test.o
-                0x000000000000026c                main
- .text.NmiSR    0x0000000000000354        0x2 ti/startup.o
+                0x00000000000002cc      0x100 test.o
+                0x00000000000002cc                main
+ .text.NmiSR    0x00000000000003cc        0x2 ti/startup.o
  .text.FaultISR
-                0x0000000000000356        0x2 ti/startup.o
+                0x00000000000003ce        0x2 ti/startup.o
  .text.IntDefaultHandler
-                0x0000000000000358        0x2 ti/startup.o
- *fill*         0x000000000000035a        0x2 
+                0x00000000000003d0        0x2 ti/startup.o
+ *fill*         0x00000000000003d2        0x2 
  .text.ResetISR
-                0x000000000000035c       0x50 ti/startup.o
-                0x000000000000035c                ResetISR
+                0x00000000000003d4       0x50 ti/startup.o
+                0x00000000000003d4                ResetISR
  .text.ButtonsPoll
-                0x00000000000003ac       0x7c ti/drivers/buttons.o
-                0x00000000000003ac                ButtonsPoll
+                0x0000000000000424       0x7c ti/drivers/buttons.o
+                0x0000000000000424                ButtonsPoll
  .text.ButtonsInit
-                0x0000000000000428       0x6c ti/drivers/buttons.o
-                0x0000000000000428                ButtonsInit
+                0x00000000000004a0       0x6c ti/drivers/buttons.o
+                0x00000000000004a0                ButtonsInit
  .text.GPIODirModeSet
-                0x0000000000000494       0x2e ti/driverlib/gcc/libdriver.a(gpio.o)
-                0x0000000000000494                GPIODirModeSet
+                0x000000000000050c       0x2e ti/driverlib/gcc/libdriver.a(gpio.o)
+                0x000000000000050c                GPIODirModeSet
  .text.GPIOPadConfigSet
-                0x00000000000004c2      0x130 ti/driverlib/gcc/libdriver.a(gpio.o)
-                0x00000000000004c2                GPIOPadConfigSet
+                0x000000000000053a      0x130 ti/driverlib/gcc/libdriver.a(gpio.o)
+                0x000000000000053a                GPIOPadConfigSet
  .text.GPIOPinWrite
-                0x00000000000005f2        0x6 ti/driverlib/gcc/libdriver.a(gpio.o)
-                0x00000000000005f2                GPIOPinWrite
+                0x000000000000066a        0x6 ti/driverlib/gcc/libdriver.a(gpio.o)
+                0x000000000000066a                GPIOPinWrite
  .text.GPIOPinTypeGPIOOutput
-                0x00000000000005f8       0x1c ti/driverlib/gcc/libdriver.a(gpio.o)
-                0x00000000000005f8                GPIOPinTypeGPIOOutput
+                0x0000000000000670       0x1c ti/driverlib/gcc/libdriver.a(gpio.o)
+                0x0000000000000670                GPIOPinTypeGPIOOutput
  .text.SysCtlPeripheralReady
-                0x0000000000000614       0x28 ti/driverlib/gcc/libdriver.a(sysctl.o)
-                0x0000000000000614                SysCtlPeripheralReady
+                0x000000000000068c       0x28 ti/driverlib/gcc/libdriver.a(sysctl.o)
+                0x000000000000068c                SysCtlPeripheralReady
  .text.SysCtlPeripheralEnable
-                0x000000000000063c       0x24 ti/driverlib/gcc/libdriver.a(sysctl.o)
-                0x000000000000063c                SysCtlPeripheralEnable
+                0x00000000000006b4       0x24 ti/driverlib/gcc/libdriver.a(sysctl.o)
+                0x00000000000006b4                SysCtlPeripheralEnable
+ .text.SysCtlDelay
+                0x00000000000006d8        0x8 ti/driverlib/gcc/libdriver.a(sysctl.o)
+                0x00000000000006d8                SysCtlDelay
  *(.rodata*)
-                0x0000000000000660                _etext = .
+                0x00000000000006e0                _etext = .
 
-.glue_7         0x0000000000000660        0x0
+.glue_7         0x00000000000006e0        0x0
  .glue_7        0x0000000000000000        0x0 linker stubs
 
-.glue_7t        0x0000000000000660        0x0
+.glue_7t        0x00000000000006e0        0x0
  .glue_7t       0x0000000000000000        0x0 linker stubs
 
-.vfp11_veneer   0x0000000000000660        0x0
+.vfp11_veneer   0x00000000000006e0        0x0
  .vfp11_veneer  0x0000000000000000        0x0 linker stubs
 
-.v4_bx          0x0000000000000660        0x0
+.v4_bx          0x00000000000006e0        0x0
  .v4_bx         0x0000000000000000        0x0 linker stubs
 
-.iplt           0x0000000000000660        0x0
+.iplt           0x00000000000006e0        0x0
  .iplt          0x0000000000000000        0x0 test.o
 
-.rel.dyn        0x0000000000000660        0x0
+.rel.dyn        0x00000000000006e0        0x0
  .rel.iplt      0x0000000000000000        0x0 test.o
 
-.data           0x0000000020000000        0x1 load address 0x0000000000000660
+.data           0x0000000020000000        0x1 load address 0x00000000000006e0
                 0x0000000020000000                _data = .
  *(vtable)
  *(.data*)
@@ -427,10 +437,10 @@ Linker script and memory map
                 0x0000000020000000        0x1 ti/drivers/buttons.o
                 0x0000000020000001                _edata = .
 
-.igot.plt       0x0000000020000004        0x0 load address 0x0000000000000664
+.igot.plt       0x0000000020000004        0x0 load address 0x00000000000006e4
  .igot.plt      0x0000000000000000        0x0 test.o
 
-.bss            0x0000000020000004      0x406 load address 0x0000000000000664
+.bss            0x0000000020000004      0x410 load address 0x00000000000006e4
                 0x0000000020000004                _bss = .
  *(.bss*)
  .bss.counter   0x0000000020000004        0x4 test.o
@@ -442,7 +452,11 @@ Linker script and memory map
  .bss.ui8SwitchClockA.4253
                 0x0000000020000409        0x1 ti/drivers/buttons.o
  *(COMMON)
-                0x000000002000040a                _ebss = .
+ *fill*         0x000000002000040a        0x2 
+ COMMON         0x000000002000040c        0x8 test.o
+                0x000000002000040c                ret_button
+                0x0000000020000410                ui32Loop
+                0x0000000020000414                _ebss = .
 LOAD test.o
 LOAD ti/startup.o
 LOAD ti/utils/ustdlib.o

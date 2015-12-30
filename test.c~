@@ -7,15 +7,57 @@
 #include "driverlib/gpio.h"
 #include "drivers/buttons.h"
 
-    uint32_t counter = 0;
+uint32_t counter = 0, ret_button;
+volatile uint32_t ui32Loop;
+
+enum ButtonStates { UP, DOWN, PRESS, RELEASE };
+ 
+enum ButtonStates delay_debounce(enum ButtonStates button_state) 
+{        
+	
+    ret_button  = ButtonsPoll(0,0);
+
+    if ((ret_button & ALL_BUTTONS) == LEFT_BUTTON)   /* if pressed     */
+    {                      
+        if (button_state == PRESS)
+        {
+            button_state = DOWN;
+        } 
+        if (button_state == UP)
+         {
+            SysCtlDelay(500);
+            if ((ret_button & ALL_BUTTONS) == LEFT_BUTTON)
+            {
+                button_state = PRESS;
+            }
+        } 
+    } 
+    else 
+    {                                 
+        if (button_state == RELEASE)  /* if not pressed */
+        {
+            button_state = UP;
+        } 
+        if (button_state == DOWN)
+        {
+            if (!((ret_button & ALL_BUTTONS) == LEFT_BUTTON))
+            {
+                SysCtlDelay(500); 
+
+                if (!((ret_button & ALL_BUTTONS) == LEFT_BUTTON))
+                {
+                    button_state = RELEASE;
+                }
+            }
+        }
+    }
+    return button_state;
+}
 
 int main ()
 {
- 
-    volatile uint32_t ui32Loop;
-    uint32_t ret_button;
 
-
+	enum ButtonStates Bs;
 
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
 
@@ -43,14 +85,18 @@ int main ()
     {
 
 	ret_button  = ButtonsPoll(0,0);
-	
-	if ( (ret_button & ALL_BUTTONS) == LEFT_BUTTON)
+
+	Bs = delay_debounce( Bs );
+
+	if ( Bs == PRESS )
 	{
 	
 		if (counter >= 3)
 		{
 			counter = 0;
 		}
+		
+		ret_button  = ButtonsPoll(0,0);
 
 		switch(counter)
 		{		
@@ -84,7 +130,6 @@ int main ()
 		GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0x0);	
 		GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, 0x0);
 		GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0x0);
-		counter = 0;
 
 	}
     }
